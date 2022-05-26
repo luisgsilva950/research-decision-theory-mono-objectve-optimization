@@ -76,9 +76,11 @@ class F2ProblemDefinition:
                     # for i in range(0, 600):
                     #     if self.solution[i][active_index]:
                     #         capacity_consumed = capacity_consumed + self.customers[i].consume
-                    self.penal = self.penal + (distance - self.max_customer_to_point_distance) ** 3
+                    self.penal = self.penal + (
+                        (
+                                distance - self.max_customer_to_point_distance) if distance > self.max_customer_to_point_distance else 0) ** 3
         self.fitness = total_distance
-        self.penal_fitness = self.fitness - self.penal
+        self.penal_fitness = self.fitness + self.penal
         return self
 
     def neighborhood_change(self, y: 'F2ProblemDefinition'):
@@ -91,16 +93,21 @@ class F2ProblemDefinition:
 
     def shake(self):
         y = copy.deepcopy(self)
-        customer = random.randint(0, 600)
         if self.k == 1:
-            index_max = numpy.argmax(y.solution[customer])
-            y.solution[customer] = [p == min([index_max + 2, 10201]) for p in range(10201)]
+            random_point = random.randint(0, 10201)
+            for customer in range(600):
+                points = y.solution[customer]
+                points[random_point] = False
+                y.solution[customer] = points
         elif self.k == 2:
-            index_max = numpy.argmax(y.solution[customer])
-            y.solution[customer] = [p == min([index_max + 101, 10201]) for p in range(10201)]
+            for _ in range(5):
+                customer = random.randint(0, 600)
+                y.solution[customer] = [0 for _ in range(10201)]
         elif self.k == 3:
-            index_max = numpy.argmax(y.solution[customer])
-            y.solution[customer] = [p == min([index_max + 204, 10201]) for p in range(10201)]
+            for _ in range(5):
+                customer = random.randint(0, 600)
+                index_max = numpy.argmax(y.solution[customer])
+                y.solution[customer] = [p == min([index_max + 2, 10201]) for p in range(10201)]
         return y
 
     def get_initial_solution(self) -> 'F2ProblemDefinition':
