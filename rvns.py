@@ -42,7 +42,6 @@ class Rvns:
             s = len(self.penal_fitness_historic[_])
             plt.plot(np.linspace(0, s - 1, s), self.penal_fitness_historic[_], '-', label=f'Execution {_}')
         plt.legend()
-        plt.show()
         plt.savefig(fname='f1_solution.png')
         plt.close()
         s = len(self.penal_fitness_historic[0])

@@ -217,6 +217,8 @@ class ProblemDefinitionF1(ProblemDefinition):
         return point
 
     def get_initial_solution(self) -> 'ProblemDefinitionF1':
+        self.active_points = []
+        self.solution = []
         for customer in self.customers:
             customer_bool_solutions = []
             highest_demanded_point = self.get_highest_demanded_point(customer=customer)
