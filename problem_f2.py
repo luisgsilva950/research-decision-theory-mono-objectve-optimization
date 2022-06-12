@@ -5,7 +5,7 @@ from typing import List
 import numpy
 
 from graphic_plotter import GraphicPlotter
-from models import ProblemDefinition, Customer, DemandPoint, Coordinate
+from models import ProblemDefinition, Customer, AccessPoint, Coordinate
 from utils import column, get_points_distances_from_file, get_arg_min, get_arg_max
 
 
@@ -15,7 +15,7 @@ class ProblemDefinitionF2(ProblemDefinition):
     max_active_points = 100
     max_consumed_capacity = 150
 
-    def __init__(self, customers: List[Customer], points: List[DemandPoint], customer_point_distances=None,
+    def __init__(self, customers: List[Customer], points: List[AccessPoint], customer_point_distances=None,
                  solution=None,
                  active_points=None, penal: float = 0.0, penal_fitness: float = 0.0, fitness: float = 0.0, k: int = 1):
         self.customers = customers or []
@@ -40,7 +40,7 @@ class ProblemDefinitionF2(ProblemDefinition):
         points = []
         for x in range(0, 1010, 10):
             for y in range(0, 1010, 10):
-                points.append(DemandPoint(x=x, y=y, index=len(points)))
+                points.append(AccessPoint(x=x, y=y, index=len(points)))
         return ProblemDefinitionF2(customers=customers, points=points,
                                    customer_point_distances=get_points_distances_from_file())
 
@@ -83,10 +83,10 @@ class ProblemDefinitionF2(ProblemDefinition):
         for customer in self.customers:
             self.solution[customer.index][index] = False
 
-    def enable_customer_point(self, customer: Customer, point: DemandPoint):
+    def enable_customer_point(self, customer: Customer, point: AccessPoint):
         self.solution[customer.index][point.index] = True
 
-    def disable_customer_point(self, customer: Customer, point: DemandPoint):
+    def disable_customer_point(self, customer: Customer, point: AccessPoint):
         self.solution[customer.index][point.index] = False
 
     def get_customers_attended_count(self) -> int:
@@ -124,7 +124,7 @@ class ProblemDefinitionF2(ProblemDefinition):
             return self
 
     def deactivate_random_demand_point_and_connect_closer_point(self):
-        random_point: DemandPoint = numpy.random.choice(self.active_points)
+        random_point: AccessPoint = numpy.random.choice(self.active_points)
         active_indexes: List[int] = [p.index for p in self.active_points]
         possible_indexes: List[int] = random_point.get_neighbor_indexes()
         possible_indexes: List[int] = [i for i in possible_indexes if i not in active_indexes]
@@ -194,7 +194,7 @@ class ProblemDefinitionF2(ProblemDefinition):
         y.update_active_points()
         return y
 
-    def get_points_with_space_100(self) -> List[DemandPoint]:
+    def get_points_with_space_100(self) -> List[AccessPoint]:
         points = []
         for p in self.points:
             if p.x % 100 == 0 and p.y % 100 == 0 and p.x >= 100 and p.y >= 100:

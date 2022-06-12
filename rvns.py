@@ -20,7 +20,6 @@ class Rvns:
         for _ in range(n):
             self.penal_fitness_historic.append([])
             self.penal_historic.append([])
-            # fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
             self.problem = self.problem.get_initial_solution()
             num_evaluated_solutions = 0
             print(f'Initial Fitness: {self.problem.penal_fitness}\n')
@@ -42,12 +41,6 @@ class Rvns:
                 self.best_solution = self.problem
             s = len(self.penal_fitness_historic[_])
             plt.plot(np.linspace(0, s - 1, s), self.penal_fitness_historic[_], '-', label=f'Execution {_}')
-            # ax2.plot(np.linspace(0, s - 1, s), self.penal_historic[_], ':', label=f'Execution {_}')
-            # ax1.set_ylabel('Penal fitness(x)')
-            # ax2.set_ylabel('Penal(x)')
-            # ax2.set_xlabel('Number of evaluations')
-            # plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4)
-            # fig.suptitle("Evolution's quality of candidate solution")
         plt.legend()
         plt.show()
         plt.savefig(fname='f1_solution.png')
@@ -55,4 +48,15 @@ class Rvns:
         s = len(self.penal_fitness_historic[0])
         plt.plot(np.linspace(0, s - 1, s), self.penal_historic[0], '-', label=f'Penal')
         plt.savefig(fname='f1_penal_historic.png')
+        plt.close()
+        best_fitness_per_iteration = [min(values) for values in self.penal_fitness_historic]
+        min_fitness = min(best_fitness_per_iteration)
+        max_fitness = max(best_fitness_per_iteration)
+        fitness_avg = sum(best_fitness_per_iteration) / len(best_fitness_per_iteration)
+        dp_sum = sum([(fitness - fitness_avg) ** 2 for fitness in best_fitness_per_iteration])
+        dp = (dp_sum / len(best_fitness_per_iteration)) ** (1 / 2)
+        print(f"Best fitness per iteration: {best_fitness_per_iteration}")
+        print(f"Best fitness: {min_fitness}")
+        print(f"Worst fitness: {max_fitness}")
+        print(f"Fitness std: {dp}")
         self.best_solution.plot_solution()

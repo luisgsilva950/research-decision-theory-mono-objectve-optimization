@@ -5,7 +5,7 @@ from typing import List, Dict
 import numpy
 
 from graphic_plotter import GraphicPlotter
-from models import ProblemDefinition, Customer, DemandPoint, Coordinate
+from models import ProblemDefinition, Customer, AccessPoint, Coordinate
 from utils import column, get_points_distances_from_file, get_arg_min, get_arg_max
 
 
@@ -15,7 +15,7 @@ class ProblemDefinitionF1(ProblemDefinition):
     max_active_points = 100
     max_consumed_capacity = 150
 
-    def __init__(self, customers: List[Customer], points: List[DemandPoint], customer_point_distances=None,
+    def __init__(self, customers: List[Customer], points: List[AccessPoint], customer_point_distances=None,
                  solution=None, active_points=None, penal: float = 0.0, penal_fitness: float = 0.0,
                  fitness: float = 0.0, k: int = 1):
         self.customers = customers or []
@@ -40,7 +40,7 @@ class ProblemDefinitionF1(ProblemDefinition):
         points = []
         for x in range(0, 1010, 10):
             for y in range(0, 1010, 10):
-                points.append(DemandPoint(x=x, y=y, index=len(points)))
+                points.append(AccessPoint(x=x, y=y, index=len(points)))
         return ProblemDefinitionF1(customers=customers, points=points,
                                    customer_point_distances=get_points_distances_from_file())
 
@@ -111,8 +111,8 @@ class ProblemDefinitionF1(ProblemDefinition):
                   f"Total active points: {len(self.active_points)}")
             return self
 
-    def deactivate_random_demand_point_and_enable_highest_demanded_closer_point(self):
-        random_point: DemandPoint = numpy.random.choice(self.active_points)
+    def deactivate_random_access_point_and_enable_highest_access_closer_point(self):
+        random_point: AccessPoint = numpy.random.choice(self.active_points)
         possible_indexes: List[int] = random_point.get_neighbor_indexes()
         consumed_capacity_per_point: Dict[int, float] = self.get_consumed_capacity()
         for customer in self.customers:
@@ -122,15 +122,15 @@ class ProblemDefinitionF1(ProblemDefinition):
                 self.enable_customer_point(customer=customer, point=self.points[point_index])
         self.deactivate_point(index=random_point.index)
 
-    def deactivate_random_demand_points_and_enable_another_random_demand_point(self, size: int = 2):
-        random_points: List[DemandPoint] = list(numpy.random.choice(self.active_points, size=size))
+    def deactivate_random_access_points_and_enable_another_access_demand_point(self, size: int = 2):
+        random_points: List[AccessPoint] = list(numpy.random.choice(self.active_points, size=size))
         for point in random_points:
             for customer in self.customers:
                 if self.solution[customer.index][point.index]:
                     self.enable_customer_point(customer=customer, point=numpy.random.choice(self.active_points))
             self.deactivate_point(index=point.index)
 
-    def deactivate_random_demand_points(self, size: int = 2):
+    def deactivate_random_access_points(self, size: int = 2):
         random_points = list(numpy.random.choice(self.active_points, size=size))
         for point in random_points:
             self.deactivate_point(index=point.index)
@@ -139,17 +139,18 @@ class ProblemDefinitionF1(ProblemDefinition):
         for customer in self.customers:
             self.solution[customer.index][index] = False
 
-    def enable_customer_point(self, customer: Customer, point: DemandPoint):
+    def enable_customer_point(self, customer: Customer, point: AccessPoint):
         self.solution[customer.index][point.index] = True
 
     def shake_k1(self):
-        self.deactivate_random_demand_point_and_enable_highest_demanded_closer_point()
+        self.deactivate_random_access_point_and_enable_highest_access_closer_point()
 
-    def shake_k2(self):
-        self.deactivate_random_demand_points_and_enable_another_random_demand_point()
+    def shake_k2(self, size: int = 2):
+        for _ in range(size):
+            self.deactivate_random_access_point_and_enable_highest_access_closer_point()
 
     def shake_k3(self):
-        self.deactivate_random_demand_points(size=1)
+        self.deactivate_random_access_points(size=1)
 
     def update_active_points(self):
         self.active_points = []
@@ -189,7 +190,7 @@ class ProblemDefinitionF1(ProblemDefinition):
             result.append((point, point_customers))
         return result
 
-    def get_less_demanded_point(self, customer: Customer) -> DemandPoint:
+    def get_less_demanded_point(self, customer: Customer) -> AccessPoint:
         consumed_capacity_per_point = self.get_consumed_capacity()
         eligible_points = [p for p in self.active_points if
                            self.customer_to_point_distances[customer.index][p.index] < self.max_distance]
@@ -202,7 +203,7 @@ class ProblemDefinitionF1(ProblemDefinition):
                 point = p
         return point
 
-    def get_highest_demanded_point(self, customer: Customer) -> DemandPoint:
+    def get_highest_demanded_point(self, customer: Customer) -> AccessPoint:
         consumed_capacity_per_point = self.get_consumed_capacity()
         eligible_points = [p for p in self.active_points if
                            self.customer_to_point_distances[customer.index][p.index] < self.max_distance]
@@ -218,11 +219,11 @@ class ProblemDefinitionF1(ProblemDefinition):
     def get_initial_solution(self) -> 'ProblemDefinitionF1':
         for customer in self.customers:
             customer_bool_solutions = []
-            less_demanded_point = self.get_highest_demanded_point(customer=customer)
-            if less_demanded_point.index not in [p.index for p in self.active_points]:
-                self.active_points.append(less_demanded_point)
+            highest_demanded_point = self.get_highest_demanded_point(customer=customer)
+            if highest_demanded_point.index not in [p.index for p in self.active_points]:
+                self.active_points.append(highest_demanded_point)
             for point_index, point in enumerate(self.points):
-                customer_bool_solutions.append(point_index == less_demanded_point.index)
+                customer_bool_solutions.append(point_index == highest_demanded_point.index)
             self.solution.append(customer_bool_solutions)
         self.update_active_points()
         self.objective_function()

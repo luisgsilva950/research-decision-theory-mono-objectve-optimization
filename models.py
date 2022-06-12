@@ -21,10 +21,10 @@ class Coordinate:
         return f'Coordinate(x={self.x}, y={self.y})'
 
 
-class DemandPoint(Coordinate):
+class AccessPoint(Coordinate):
 
     def __init__(self, x: float, y: float, index: Optional[int]):
-        super(DemandPoint, self).__init__(x, y)
+        super(AccessPoint, self).__init__(x, y)
         self.index = index
 
     def get_neighbor_indexes(self) -> List[int]:
@@ -37,7 +37,7 @@ class Customer:
         self.coordinates = coordinates
         self.index = index
 
-    def get_closer_point(self, points: List[DemandPoint], distances: List[float] = None) -> DemandPoint:
+    def get_closer_point(self, points: List[AccessPoint], distances: List[float] = None) -> AccessPoint:
         if not distances:
             distances = [self.coordinates.get_distance(p) for p in points]
         if len(points) != len(distances):
