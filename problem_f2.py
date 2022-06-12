@@ -123,7 +123,7 @@ class ProblemDefinitionF2(ProblemDefinition):
                   f"Total active points: {len(self.active_points)}")
             return self
 
-    def deactivate_random_demand_point_and_enable_closer_point(self):
+    def deactivate_random_demand_point_and_connect_closer_point(self):
         random_point: DemandPoint = numpy.random.choice(self.active_points)
         active_indexes: List[int] = [p.index for p in self.active_points]
         possible_indexes: List[int] = random_point.get_neighbor_indexes()
@@ -139,21 +139,22 @@ class ProblemDefinitionF2(ProblemDefinition):
         random_customers: List[Customer] = list(numpy.random.choice(self.customers, size=size))
         for customer in random_customers:
             index_max = get_arg_max(self.solution[customer.index])
-            self.disable_customer_point(customer=customer, point=self.points[index_max])
-            if self.solution[customer.index][index_max]:
-                closer_point = customer.get_closer_point(points=self.active_points,
-                                                         distances=self.customer_to_point_distances[customer.index])
+            closer_point = customer.get_closer_point(points=self.active_points,
+                                                     distances=self.customer_to_point_distances[customer.index])
+            if self.solution[customer.index][index_max] and closer_point.index != index_max:
                 self.enable_customer_point(customer=customer, point=closer_point)
+                self.disable_customer_point(customer=customer, point=self.points[index_max])
 
     def deactivate_random_customers(self, size: int = 5):
-        random_customers: List[Customer] = list(numpy.random.choice(self.customers, size=size))
+        random_customers: List[Customer] = list(
+            numpy.random.choice([c for c in self.customers if max(self.solution[c.index]) > 0], size=size))
         for customer in random_customers:
             index_max = get_arg_max(self.solution[customer.index])
             self.disable_customer_point(customer=customer, point=self.points[index_max])
 
-    def enable_random_customers(self, size: int = 3):
+    def enable_random_customers(self, size: int = 5):
         random_customers: List[Customer] = list(
-            numpy.random.choice([c for c in self.customers if max(self.solution[c.index]) > 0], size=size))
+            numpy.random.choice([c for c in self.customers if max(self.solution[c.index]) == 0], size=size))
         for customer in random_customers:
             closer_point = customer.get_closer_point(points=self.active_points)
             self.enable_customer_point(customer=customer, point=closer_point)
@@ -166,8 +167,8 @@ class ProblemDefinitionF2(ProblemDefinition):
         self.enable_random_customers()
 
     def shake_k3(self):
-        self.deactivate_random_demand_point_and_enable_closer_point()
-        self.deactivate_random_demand_point_and_enable_closer_point()
+        self.deactivate_random_demand_point_and_connect_closer_point()
+        self.deactivate_random_demand_point_and_connect_closer_point()
 
     def update_active_points(self):
         self.active_points = []
@@ -216,6 +217,8 @@ class ProblemDefinitionF2(ProblemDefinition):
 
     def get_initial_solution(self) -> 'ProblemDefinitionF2':
         all_points = self.get_points_with_space_100()
+        self.active_points = []
+        self.solution = []
         for customer in self.customers:
             customer_bool_solutions = []
             distances = [self.customer_to_point_distances[customer.index][p.index] for p in all_points]
