@@ -58,4 +58,4 @@ class Rvns:
         print(f"Best fitness: {min_fitness}")
         print(f"Worst fitness: {max_fitness}")
         print(f"Fitness std: {dp}")
-        self.best_solution.plot_solution()
+        # self.best_solution.plot_solution()
