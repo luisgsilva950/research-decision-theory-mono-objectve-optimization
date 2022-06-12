@@ -7,17 +7,17 @@ from models import ProblemDefinition
 
 
 class Rvns:
-    def __init__(self, problem: ProblemDefinition, kmax: int = 3, max_solutions_evaluations: int = 1000):
+    def __init__(self, problem: ProblemDefinition, kmax: int = 3, max_solutions_evaluations: int = 1000, n=5):
         self.problem = problem
         self.kmax = kmax
         self.max_solutions_evaluations = max_solutions_evaluations
         self.penal_fitness_historic = []
         self.penal_historic = []
         self.best_solution: Optional[ProblemDefinition] = None
+        self.n = n
 
     def run(self):
-        n = 5
-        for _ in range(n):
+        for _ in range(self.n):
             self.penal_fitness_historic.append([])
             self.penal_historic.append([])
             self.problem = self.problem.get_initial_solution()

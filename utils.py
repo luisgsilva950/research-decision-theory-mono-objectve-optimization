@@ -20,3 +20,9 @@ def get_points_distances_from_file() -> List[List[float]]:
     with open('customer_point_distances.json', 'r') as f:
         value = json.load(f)
     return value
+
+
+def save_points_epsilon_restrict_problem(f1_values: List[float], f2_values: List[float]) -> None:
+    with open('epsilon_restrict_f1_solution.json', 'w') as f:
+        result = dict(f1=f1_values, f2=f2_values)
+        json.dump(result, f)
