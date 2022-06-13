@@ -1,0 +1,80 @@
+   0.0 TEL | Telepresence 0.109 launched at Mon Jun 13 10:42:03 2022
+   0.0 TEL |   /usr/local/bin/telepresence
+   0.0 TEL | uname: uname_result(system='Darwin', node='STRIDER-285.local', release='20.6.0', version='Darwin Kernel Version 20.6.0: Mon Aug 30 06:12:21 PDT 2021; root:xnu-7195.141.6~3/RELEASE_X86_64', machine='x86_64')
+   0.0 TEL | Platform: darwin
+   0.0 TEL | WSL: False
+   0.0 TEL | Python 3.9.9 (main, Nov 21 2021, 03:23:42)
+   0.0 TEL | [Clang 13.0.0 (clang-1300.0.29.3)]
+   0.0 TEL | BEGIN SPAN main.py:40(main)
+   0.0 TEL | BEGIN SPAN startup.py:83(set_kube_command)
+   0.0 TEL | Found kubectl -> /usr/local/bin/kubectl
+   0.0 TEL | [1] Capturing: kubectl config current-context
+   0.1 TEL | [1] captured in 0.05 secs.
+   0.1 TEL | [2] Capturing: kubectl --context staging version --short
+   2.1 TEL | [2] captured in 1.98 secs.
+   2.1 TEL | [3] Capturing: kubectl --context staging config view -o json
+   2.1 TEL | [3] captured in 0.06 secs.
+   2.1 TEL | [4] Capturing: kubectl --context staging api-versions
+   3.7 TEL | [4] captured in 1.60 secs.
+   3.7 TEL | Command: kubectl 1.20.4-dirty
+   3.7 TEL | Context: staging, namespace: staging, version: 1.20.15-eks-a64ea69
+   3.7 TEL | END SPAN startup.py:83(set_kube_command)    3.7s
+   3.7 >>> | Using a Pod instead of a Deployment for the Telepresence proxy. If you experience problems, please file an issue!
+   3.7 >>> | Set the environment variable TELEPRESENCE_USE_DEPLOYMENT to any non-empty value to force the old behavior, e.g.,
+   3.7 >>> |     env TELEPRESENCE_USE_DEPLOYMENT=1 telepresence --run curl hello
+   3.7 >>> | 
+   3.7 TEL | Found ssh -> /usr/bin/ssh
+   3.7 TEL | [5] Capturing: ssh -V
+   3.8 TEL | [5] captured in 0.04 secs.
+   3.8 TEL | Found bash -> /bin/bash
+   3.8 TEL | Found sshuttle-telepresence -> /usr/local/Cellar/telepresence-legacy/0.109/libexec/sshuttle-telepresence
+   3.8 TEL | Found pfctl -> /sbin/pfctl
+   3.8 TEL | Found sudo -> /usr/bin/sudo
+   3.8 TEL | [6] Running: sudo -n echo -n
+   3.9   6 | sudo: a password is required
+   3.9 TEL | [6] exit 1 in 0.09 secs.
+   3.9 >>> | How Telepresence uses sudo: https://www.telepresence.io/reference/install#dependencies
+   3.9 >>> | Invoking sudo. Please enter your sudo password.
+   3.9 TEL | [7] Running: sudo echo -n
+   8.6 >>> | Received signal SIGHUP while in function _try_wait
+   8.6   7 | sudo: a password is required
+  10.6 TEL | CRASH: [Errno 5] Input/output error
+  10.6 TEL | Traceback (most recent call last):
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 238, in require_sudo
+  10.6 TEL |     self.check_call(["sudo", "-n", "echo", "-n"])
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 458, in check_call
+  10.6 TEL |     self._run_command_sync(
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 437, in _run_command_sync
+  10.6 TEL |     raise CalledProcessError(
+  10.6 TEL | subprocess.CalledProcessError: Command '['sudo', '-n', 'echo', '-n']' returned non-zero exit status 1.
+  10.6 TEL | 
+  10.6 TEL | During handling of the above exception, another exception occurred:
+  10.6 TEL | 
+  10.6 TEL | Traceback (most recent call last):
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/cli.py", line 135, in crash_reporting
+  10.6 TEL |     yield
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/main.py", line 52, in main
+  10.6 TEL |     launch = outbound.setup(runner, args)
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/outbound/setup.py", line 180, in setup
+  10.6 TEL |     return setup_vpn(runner, args)
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/outbound/setup.py", line 80, in setup_vpn
+  10.6 TEL |     runner.require_sudo()
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 247, in require_sudo
+  10.6 TEL |     self.check_call(["sudo", "echo", "-n"])
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 458, in check_call
+  10.6 TEL |     self._run_command_sync(
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 407, in _run_command_sync
+  10.6 TEL |     retcode = process.wait(timeout)
+  10.6 TEL |   File "/usr/local/Cellar/python@3.9/3.9.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1189, in wait
+  10.6 TEL |     return self._wait(timeout=timeout)
+  10.6 TEL |   File "/usr/local/Cellar/python@3.9/3.9.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1917, in _wait
+  10.6 TEL |     (pid, sts) = self._try_wait(0)
+  10.6 TEL |   File "/usr/local/Cellar/python@3.9/3.9.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1875, in _try_wait
+  10.6 TEL |     (pid, sts) = os.waitpid(self.pid, wait_flags)
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 656, in _signal_received
+  10.6 TEL |     self.show(
+  10.6 TEL |   File "/usr/local/bin/telepresence/telepresence/runner/runner.py", line 194, in show
+  10.6 TEL |     print(self.wrapper.fill(line), file=sys.stderr)
+  10.6 TEL | OSError: [Errno 5] Input/output error
+  10.6 TEL | (calling crash reporter...)
+  10.6 >>> | Exit cleanup in progress

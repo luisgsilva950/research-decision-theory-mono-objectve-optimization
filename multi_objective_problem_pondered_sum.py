@@ -16,7 +16,7 @@ class PonderedSumProblem(ProblemDefinition):
 
     def __init__(self, customers: List[Customer], points: List[AccessPoint], customer_point_distances=None,
                  solution=None, active_points=None, penal: float = 0.0, penal_fitness: float = 0.0,
-                 fitness: float = 0.0, k: int = 1, max_active_points: int = 100, w1: float = 1.0, w2: float = 0.0):
+                 fitness: float = 0.0, k: int = 1, max_active_points: int = 100, w1: float = 1.0, w2: float = 0.0, total_distance: float = 0):
         self.customers = customers or []
         self.points = points or []
         self.k = k
@@ -27,6 +27,7 @@ class PonderedSumProblem(ProblemDefinition):
         self.solution = solution or []
         self.active_points = active_points or []
         self.max_active_points = max_active_points
+        self.total_distance = total_distance
         self.w1 = w1
         self.w2 = w2
 
@@ -55,8 +56,11 @@ class PonderedSumProblem(ProblemDefinition):
         self.penal = 0.0
         penal_distance_count = 0
         penal_consumed_capacity_count = 0
-        for customer_index, customer_active_points in enumerate(self.solution):
-            for point_index, active in enumerate(customer_active_points):
+        for active_point in self.active_points:
+            for customer in self.customers:
+                point_index = active_point.index
+                customer_index = customer.index
+                active = self.solution[customer.index][active_point.index]
                 if active:
                     consumed_capacity = consumed_capacity_per_point[point_index]
                     distance = self.customer_to_point_distances[customer_index][point_index]
@@ -73,7 +77,8 @@ class PonderedSumProblem(ProblemDefinition):
             self.penal = self.penal + 400 * (total_active_points - self.max_active_points)
         if customers_attended_count < self.min_customers_attended:
             self.penal = self.penal + 600 * (self.min_customers_attended - customers_attended_count)
-        self.fitness = total_distance * self.w1 + total_active_points * self.w2 * 20
+        self.total_distance = total_distance
+        self.fitness = self.total_distance * self.w1 + total_active_points * self.w2 * 10
         self.penal_fitness = self.fitness + self.penal
         print(f"\033[3;94mThe distance restriction was counted as: {penal_distance_count}")
         print(f"\033[3;94mThe consumed capacity restriction was counted as: {penal_consumed_capacity_count}")
@@ -100,11 +105,10 @@ class PonderedSumProblem(ProblemDefinition):
 
     def get_consumed_capacity(self) -> dict:
         consumed_capacity_per_point = collections.defaultdict(float)
-        for point in self.active_points:
-            point_customers = column(self.solution, point.index)
-            for customer_index, is_point_active_in_customer in enumerate(point_customers):
-                if is_point_active_in_customer:
-                    consumed_capacity_per_point[point.index] += self.customers[customer_index].consume
+        for customer in self.customers:
+            for active_point in self.active_points:
+                if self.solution[customer.index][active_point.index]:
+                    consumed_capacity_per_point[active_point.index] += self.customers[customer.index].consume
         return consumed_capacity_per_point
 
     def neighborhood_change(self, y: 'PonderedSumProblem'):
@@ -115,7 +119,7 @@ class PonderedSumProblem(ProblemDefinition):
                                    solution=copy.deepcopy(y.solution),
                                    active_points=copy.deepcopy(y.active_points), fitness=y.fitness, penal=y.penal,
                                    penal_fitness=y.penal_fitness,
-                                   k=y.k)
+                                   k=y.k, total_distance=y.total_distance)
             print(f"\033[3;94mCustomers attended: {y.get_customers_attended_count()} - "
                   f"Total active points: {len(y.active_points)}")
             return y
@@ -187,7 +191,7 @@ class PonderedSumProblem(ProblemDefinition):
                                active_points=copy.deepcopy(self.active_points), fitness=self.fitness,
                                penal=self.penal,
                                penal_fitness=self.penal_fitness,
-                               k=self.k)
+                               k=self.k, total_distance=self.total_distance)
         if self.k == 1:
             y.shake_k1()
         elif self.k == 2:
