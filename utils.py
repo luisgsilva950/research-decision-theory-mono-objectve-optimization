@@ -22,7 +22,7 @@ def get_points_distances_from_file() -> List[List[float]]:
     return value
 
 
-def save_points_epsilon_restrict_problem(f1_values: List[float], f2_values: List[float]) -> None:
-    with open('epsilon_restrict_f1_solution.json', 'w') as f:
+def save_points_epsilon_restrict_problem(file_name: str, f1_values: List[float], f2_values: List[float]) -> None:
+    with open(file_name, 'w') as f:
         result = dict(f1=f1_values, f2=f2_values)
         json.dump(result, f)

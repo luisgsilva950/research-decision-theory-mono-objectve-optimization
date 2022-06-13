@@ -52,6 +52,7 @@ class ProblemDefinition:
     fitness: float
     penal: float
     active_points: List[AccessPoint]
+    total_distance: float = 0
 
     def objective_function(self) -> 'ProblemDefinition':
         ...

@@ -40,14 +40,14 @@ class Rvns:
             if not self.best_solution or self.problem.penal_fitness < self.best_solution.penal_fitness:
                 self.best_solution = self.problem
             s = len(self.penal_fitness_historic[_])
-            plt.plot(np.linspace(0, s - 1, s), self.penal_fitness_historic[_], '-', label=f'Execution {_}')
-        plt.legend()
-        plt.savefig(fname='f1_solution.png')
-        plt.close()
+            # plt.plot(np.linspace(0, s - 1, s), self.penal_fitness_historic[_], '-', label=f'Execution {_}')
+        # plt.legend()
+        # plt.savefig(fname='f1_solution.png')
+        # plt.close()
         s = len(self.penal_fitness_historic[0])
-        plt.plot(np.linspace(0, s - 1, s), self.penal_historic[0], '-', label=f'Penal')
-        plt.savefig(fname='f1_penal_historic.png')
-        plt.close()
+        # plt.plot(np.linspace(0, s - 1, s), self.penal_historic[0], '-', label=f'Penal')
+        # plt.savefig(fname='f1_penal_historic.png')
+        # plt.close()
         best_fitness_per_iteration = [min(values) for values in self.penal_fitness_historic]
         min_fitness = min(best_fitness_per_iteration)
         max_fitness = max(best_fitness_per_iteration)
@@ -58,4 +58,4 @@ class Rvns:
         print(f"Best fitness: {min_fitness}")
         print(f"Worst fitness: {max_fitness}")
         print(f"Fitness std: {dp}")
-        self.best_solution.plot_solution()
+        # self.best_solution.plot_solution()
