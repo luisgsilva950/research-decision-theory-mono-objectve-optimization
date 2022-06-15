@@ -1,9 +1,6 @@
 from typing import Optional
 
-import numpy as np
-from matplotlib import pyplot as plt
-
-from models import ProblemDefinition
+from problem_definition import ProblemDefinition
 
 
 class Rvns:

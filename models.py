@@ -1,9 +1,6 @@
-from typing import Optional, List, Set, Collection
-import matplotlib.pyplot as plt
+from typing import Optional, List, Collection
 
 import numpy
-import numpy as np
-
 from utils import get_arg_min
 
 
@@ -51,27 +48,3 @@ class Customer:
             distances = [self.coordinates.get_distance(p) for p in points]
         index_min = get_arg_min(distances)
         return points[index_min]
-
-
-class ProblemDefinition:
-    k: int
-    penal_fitness: float
-    fitness: float
-    penal: float
-    active_points: Set[AccessPoint]
-    total_distance: float
-
-    def objective_function(self) -> 'ProblemDefinition':
-        ...
-
-    def neighborhood_change(self, y: 'ProblemDefinition') -> 'ProblemDefinition':
-        ...
-
-    def shake(self) -> 'ProblemDefinition':
-        ...
-
-    def get_initial_solution(self) -> 'ProblemDefinition':
-        ...
-
-    def plot_solution(self) -> None:
-        ...
