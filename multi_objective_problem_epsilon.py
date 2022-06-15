@@ -125,7 +125,7 @@ class EpsilonRestrictProblem(ProblemDefinition):
             return self
 
     def deactivate_random_demand_point_and_connect_closer_point(self):
-        random_point: AccessPoint = numpy.random.choice(self.active_points)
+        random_point: AccessPoint = numpy.random.choice(list(self.active_points))
         active_indexes: List[int] = [p.index for p in self.active_points]
         possible_indexes: List[int] = random_point.get_neighbor_indexes()
         possible_indexes: List[int] = [i for i in possible_indexes if i not in active_indexes]
@@ -172,11 +172,11 @@ class EpsilonRestrictProblem(ProblemDefinition):
         self.deactivate_random_demand_point_and_connect_closer_point()
 
     def update_active_points(self):
-        self.active_points = []
+        self.active_points = set()
         for i in range(10201):
             is_active_point = max(column(self.solution, i))
             if is_active_point:
-                self.active_points.append(self.points[i])
+                self.active_points.add(self.points[i])
 
     def shake(self):
         y = EpsilonRestrictProblem(customers=self.customers, points=self.points,
@@ -229,7 +229,7 @@ class EpsilonRestrictProblem(ProblemDefinition):
                 closer_point = customer.get_closer_point(points=self.points,
                                                          distances=self.customer_to_point_distances[customer.index])
             if closer_point.index not in [p.index for p in self.active_points]:
-                self.active_points.append(closer_point)
+                self.active_points.add(closer_point)
             for point_index, point in enumerate(self.points):
                 customer_bool_solutions.append(point_index == closer_point.index)
             self.solution.append(customer_bool_solutions)

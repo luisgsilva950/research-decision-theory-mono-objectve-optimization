@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Set, Collection
 import matplotlib.pyplot as plt
 
 import numpy
@@ -27,6 +27,12 @@ class AccessPoint(Coordinate):
         super(AccessPoint, self).__init__(x, y)
         self.index = index
 
+    def __hash__(self):
+        return hash(self.index)
+
+    def __eq__(self, other: 'AccessPoint'):
+        return self.index == other.index
+
     def get_neighbor_indexes(self) -> List[int]:
         return [min(self.index + 1, 10200), self.index - 1, min(self.index + 1000, 10200), self.index - 1000]
 
@@ -37,7 +43,8 @@ class Customer:
         self.coordinates = coordinates
         self.index = index
 
-    def get_closer_point(self, points: List[AccessPoint], distances: List[float] = None) -> AccessPoint:
+    def get_closer_point(self, points: Collection[AccessPoint], distances: List[float] = None) -> AccessPoint:
+        points = list(points)
         if not distances:
             distances = [self.coordinates.get_distance(p) for p in points]
         if len(points) != len(distances):
@@ -51,7 +58,7 @@ class ProblemDefinition:
     penal_fitness: float
     fitness: float
     penal: float
-    active_points: List[AccessPoint]
+    active_points: Set[AccessPoint]
     total_distance: float
 
     def objective_function(self) -> 'ProblemDefinition':

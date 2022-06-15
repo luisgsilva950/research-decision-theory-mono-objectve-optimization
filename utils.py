@@ -1,28 +1,30 @@
 import json
 
-import numpy
-from typing import List
+from typing import List, Any
 
 
 def column(matrix, i):
     return [row[i] for row in matrix]
 
 
-def get_arg_max(_list) -> int:
-    return numpy.argmax(_list)
+def get_arg_max(_list: list) -> int:
+    return _list.index(max(_list))
 
 
-def get_arg_min(_list) -> int:
-    return numpy.argmin(_list)
+def get_arg_min(_list: list) -> int:
+    return _list.index(min(_list))
 
 
 def get_points_distances_from_file() -> List[List[float]]:
     with open('customer_point_distances.json', 'r') as f:
-        value = json.load(f)
-    return value
+        return json.load(f)
 
 
-def save_points_epsilon_restrict_problem(file_name: str, f1_values: List[float], f2_values: List[float]) -> None:
+def save_file(file_name: str, **kwargs) -> None:
     with open(file_name, 'w') as f:
-        result = dict(f1=f1_values, f2=f2_values)
-        json.dump(result, f)
+        json.dump(kwargs, f)
+
+
+def load_file(file_name: str) -> Any:
+    with open(file_name, 'r') as f:
+        return json.load(f)

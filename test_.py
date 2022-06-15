@@ -5,7 +5,7 @@ from multi_objective_problem_pondered_sum import PonderedSumProblem
 from problem_f1 import ProblemDefinitionF1
 from problem_f2 import ProblemDefinitionF2
 from rvns import Rvns
-from utils import save_points_epsilon_restrict_problem
+from utils import save_file
 from matplotlib import pyplot as plt
 from multiprocessing import Pool, Process
 from concurrent.futures import ThreadPoolExecutor
@@ -45,8 +45,8 @@ def generate_file_for_execution(iteration: int, f1_initial_values: List[float], 
         f1_values.append(len(result.active_points))
         f2_values.append(result.total_distance)
     plt.plot(f1_values, f2_values, '.', label=f'Execution {iteration}')
-    save_points_epsilon_restrict_problem(file_name=f"execution_{iteration}_pondered_sum.json", f1_values=f1_values,
-                                         f2_values=f2_values)
+    save_file(file_name=f"execution_{iteration}_pondered_sum.json", f1_values=f1_values,
+              f2_values=f2_values)
 
 
 if __name__ == '__main__':

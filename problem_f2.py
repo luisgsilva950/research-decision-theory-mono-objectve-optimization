@@ -16,8 +16,8 @@ class ProblemDefinitionF2(ProblemDefinition):
     max_consumed_capacity = 150
 
     def __init__(self, customers: List[Customer], points: List[AccessPoint], customer_point_distances=None,
-                 solution=None,
-                 active_points=None, penal: float = 0.0, penal_fitness: float = 0.0, fitness: float = 0.0, k: int = 1, total_distance: float = 0):
+                 solution=None, active_points=None, penal: float = 0.0, penal_fitness: float = 0.0,
+                 fitness: float = 0.0, k: int = 1, total_distance: float = 0):
         self.customers = customers or []
         self.points = points or []
         self.k = k
@@ -26,7 +26,7 @@ class ProblemDefinitionF2(ProblemDefinition):
         self.penal = penal
         self.customer_to_point_distances = customer_point_distances or []
         self.solution = solution or []
-        self.active_points = active_points or []
+        self.active_points = active_points or set()
         self.total_distance = total_distance
 
     @staticmethod
@@ -111,10 +111,10 @@ class ProblemDefinitionF2(ProblemDefinition):
     def neighborhood_change(self, y: 'ProblemDefinitionF2'):
         if y.penal_fitness < self.penal_fitness:
             y.k = 1
-            y = ProblemDefinitionF2(customers=y.customers, points=y.points,
+            y = ProblemDefinitionF2(customers=y.customers.copy(), points=y.points.copy(),
                                     customer_point_distances=y.customer_to_point_distances,
-                                    solution=copy.deepcopy(y.solution),
-                                    active_points=copy.deepcopy(y.active_points), fitness=y.fitness, penal=y.penal,
+                                    solution=[p.copy() for p in y.solution],
+                                    active_points=y.active_points.copy(), fitness=y.fitness, penal=y.penal,
                                     penal_fitness=y.penal_fitness,
                                     k=y.k, total_distance=y.total_distance)
             print(f"\033[3;94mCustomers attended: {y.get_customers_attended_count()} - "
@@ -128,7 +128,7 @@ class ProblemDefinitionF2(ProblemDefinition):
             return self
 
     def deactivate_random_demand_point_and_connect_closer_point(self):
-        random_point: AccessPoint = numpy.random.choice(self.active_points)
+        random_point: AccessPoint = numpy.random.choice(list(self.active_points))
         active_indexes: List[int] = [p.index for p in self.active_points]
         possible_indexes: List[int] = random_point.get_neighbor_indexes()
         possible_indexes: List[int] = [i for i in possible_indexes if i not in active_indexes]
@@ -175,17 +175,17 @@ class ProblemDefinitionF2(ProblemDefinition):
         self.deactivate_random_demand_point_and_connect_closer_point()
 
     def update_active_points(self):
-        self.active_points = []
-        for i in range(10201):
-            is_active_point = max(column(self.solution, i))
-            if is_active_point:
-                self.active_points.append(self.points[i])
+        self.active_points = set()
+        for customer in self.customers:
+            if any(self.solution[customer.index]):
+                index = get_arg_max(self.solution[customer.index])
+                self.active_points.add(self.points[index])
 
     def shake(self):
-        y = ProblemDefinitionF2(customers=self.customers, points=self.points,
+        y = ProblemDefinitionF2(customers=self.customers.copy(), points=self.points.copy(),
                                 customer_point_distances=self.customer_to_point_distances,
-                                solution=copy.deepcopy(self.solution),
-                                active_points=copy.deepcopy(self.active_points), fitness=self.fitness,
+                                solution=[p.copy() for p in self.solution],
+                                active_points=self.active_points.copy(), fitness=self.fitness,
                                 penal=self.penal,
                                 penal_fitness=self.penal_fitness,
                                 k=self.k, total_distance=self.total_distance)
@@ -221,7 +221,7 @@ class ProblemDefinitionF2(ProblemDefinition):
 
     def get_initial_solution(self) -> 'ProblemDefinitionF2':
         all_points = self.get_points_with_space_100()
-        self.active_points = []
+        self.active_points = set()
         self.solution = []
         for customer in self.customers:
             customer_bool_solutions = []
@@ -232,7 +232,7 @@ class ProblemDefinitionF2(ProblemDefinition):
                 closer_point = customer.get_closer_point(points=self.points,
                                                          distances=self.customer_to_point_distances[customer.index])
             if closer_point.index not in [p.index for p in self.active_points]:
-                self.active_points.append(closer_point)
+                self.active_points.add(closer_point)
             for point_index, point in enumerate(self.points):
                 customer_bool_solutions.append(point_index == closer_point.index)
             self.solution.append(customer_bool_solutions)

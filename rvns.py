@@ -26,6 +26,7 @@ class Rvns:
             while num_evaluated_solutions <= self.max_solutions_evaluations:
                 self.problem.k = 1
                 while self.problem.k <= self.kmax and num_evaluated_solutions <= self.max_solutions_evaluations:
+                    print(f"Will shake: {self.problem.k}")
                     new_solution = self.problem.shake()
                     new_solution = new_solution.objective_function()
                     num_evaluated_solutions += 1
@@ -44,7 +45,7 @@ class Rvns:
         # plt.legend()
         # plt.savefig(fname='f1_solution.png')
         # plt.close()
-        s = len(self.penal_fitness_historic[0])
+        # s = len(self.penal_fitness_historic[0])
         # plt.plot(np.linspace(0, s - 1, s), self.penal_historic[0], '-', label=f'Penal')
         # plt.savefig(fname='f1_penal_historic.png')
         # plt.close()
