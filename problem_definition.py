@@ -104,8 +104,9 @@ class ProblemDefinition:
         for customer in self.customers:
             if self.solution[customer.index][random_point.index]:
                 possible_distances = [self.customer_to_point_distances[customer.index][i] for i in possible_indexes]
-                closer_index = possible_indexes[get_arg_min(possible_distances)]
-                self.enable_customer_point(customer=customer, point=self.points[closer_index])
+                if possible_distances:
+                    closer_index = possible_indexes[get_arg_min(possible_distances)]
+                    self.enable_customer_point(customer=customer, point=self.points[closer_index])
         self.deactivate_point(index=random_point.index)
 
     def connect_random_customers_to_closer_active_demand_point(self, size: int = 5):
