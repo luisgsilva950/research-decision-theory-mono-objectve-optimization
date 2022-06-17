@@ -36,7 +36,7 @@ def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIG
 
 
 if __name__ == '__main__':
-    plot_result(scope="epsilon_restrict", n=500, n_weights=40)
+    plot_result(scope="pondered_sum")
     # is_eligible_solution = []
     # problem_f1 = ProblemDefinitionF1.from_csv()
     # rvns_f1 = Rvns(problem=problem_f1, max_solutions_evaluations=5 * N_EVALUATIONS, n=1)
