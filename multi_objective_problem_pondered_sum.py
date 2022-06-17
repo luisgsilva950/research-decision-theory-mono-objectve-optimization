@@ -1,4 +1,7 @@
 from typing import List
+
+import numpy
+
 from models import Customer, AccessPoint, Coordinate
 from problem_definition import ProblemDefinition
 from utils import get_points_distances_from_file, get_arg_min, get_arg_max
@@ -70,7 +73,7 @@ class PonderedSumProblem(ProblemDefinition):
         self.penalize_total_active_points()
         self.penalize_total_customers(customers_attended_count=customers_attended_count)
         self.total_distance = total_distance
-        self.fitness = self.total_distance * self.w1 + total_active_points * self.w2 * 200
+        self.fitness = self.total_distance * self.w1 + total_active_points * self.w2 * 250
         self.penal_fitness = self.fitness + self.penal
         print(f"\033[3;94mThe distance restriction was counted as: {penal_distance_count}")
         print(f"\033[3;94mThe consumed capacity restriction was counted as: {penal_consumed_capacity_count}")
@@ -105,8 +108,15 @@ class PonderedSumProblem(ProblemDefinition):
         self.deactivate_less_demanded_access_point()
 
     def shake_k3(self):
-        self.deactivate_random_access_points(size=1)
-        self.enable_random_customers(size=3, points=self.points)
+        self.deactivate_random_access_points(size=2)
+        self.enable_random_customers(size=10, points=self.points)
+
+    def shake_k4(self):
+        self.deactivate_random_demand_point_and_connect_closer_point()
+
+    def shake_k5(self):
+        self.enable_random_customers(size=numpy.random.randint(1, 10))
+        self.deactivate_random_customers(size=numpy.random.randint(1, 10))
 
     def shake(self):
         y = PonderedSumProblem(customers=self.customers, points=self.points,
@@ -122,6 +132,10 @@ class PonderedSumProblem(ProblemDefinition):
             y.shake_k2()
         elif self.k == 3:
             y.shake_k3()
+        elif self.k == 4:
+            y.shake_k4()
+        elif self.k == 5:
+            y.shake_k5()
         y.update_active_points()
         return y
 
@@ -137,8 +151,7 @@ class PonderedSumProblem(ProblemDefinition):
             if distances[index] > self.max_distance and len(self.active_points) < self.max_active_points:
                 closer_point = customer.get_closer_point(points=self.points,
                                                          distances=self.customer_to_point_distances[customer.index])
-            if closer_point.index not in [p.index for p in self.active_points]:
-                self.active_points.add(closer_point)
+            self.active_points.add(closer_point)
             for point_index, point in enumerate(self.points):
                 customer_bool_solutions.append(point_index == closer_point.index)
             self.solution.append(customer_bool_solutions)

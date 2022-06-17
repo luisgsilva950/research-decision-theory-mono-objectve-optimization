@@ -5,7 +5,7 @@ import numpy
 from numpy import random
 
 from graphic_plotter import GraphicPlotter
-from models import AccessPoint, Customer
+from models import AccessPoint, Customer, Coordinate
 from utils import get_arg_min, get_arg_max
 
 
@@ -58,10 +58,12 @@ class ProblemDefinition:
         total_active_points = len(self.active_points)
         if total_active_points > self.max_active_points:
             self.penal = self.penal + 600 * (total_active_points - self.max_active_points)
+            print(f"The total active points restriction was affected. Total active points: {total_active_points}")
 
     def penalize_total_customers(self, customers_attended_count: int):
         if customers_attended_count < self.min_customers_attended:
             self.penal = self.penal + 600 * (self.min_customers_attended - customers_attended_count)
+            print(f"The total customers restriction was affected. Total customers: {customers_attended_count}")
 
     # Shake methods
     def deactivate_point(self, index: int):
@@ -183,3 +185,14 @@ class ProblemDefinition:
                     point_customers.append(customer.coordinates)
             result.append((point, point_customers))
         return result
+
+
+def get_pareto_great_solutions(values: List[Coordinate]) -> List[Coordinate]:
+    pareto_great_solutions = []
+    values.sort()
+    for index, coordinate in enumerate(values):
+        values_until_index = values[0:index]
+        is_pareto_great = not any([p.y < coordinate.y for p in values_until_index])
+        if is_pareto_great:
+            pareto_great_solutions.append(coordinate)
+    return pareto_great_solutions
