@@ -1,5 +1,4 @@
-from models import Coordinate
-from problem_definition import get_pareto_great_solutions
+from models import CoordinatesCalculator, Coordinate
 from utils import load_file
 from matplotlib import pyplot as plt
 
@@ -20,13 +19,13 @@ def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIG
         viable_solution = curve["is_eligible_solution"]
         f1s = curve["f1_values"]
         f2s = curve["f2_values"]
-        eligible_f1_values = [f1 for index, f1 in enumerate(f1s) if viable_solution[index]]
-        eligible_f2_values = [f2 for index, f2 in enumerate(f2s) if viable_solution[index]]
+        eligible_f1s = [f1 for index, f1 in enumerate(f1s) if viable_solution[index]]
+        eligible_f2s = [f2 for index, f2 in enumerate(f2s) if viable_solution[index]]
         non_viable_f1.extend([f1 for index, f1 in enumerate(f1s) if not viable_solution[index]])
         non_viable_f2.extend([f2 for index, f2 in enumerate(f2s) if not viable_solution[index]])
-        all_points.extend([Coordinate(x=x, y=eligible_f2_values[index]) for index, x in enumerate(eligible_f1_values)])
-        plt.plot(eligible_f1_values, eligible_f2_values, '.', label=f'Execution {curve_number}')
-    pareto_greats = get_pareto_great_solutions(values=all_points)
+        all_points.extend([Coordinate(x=x, y=eligible_f2s[index]) for index, x in enumerate(eligible_f1s)])
+        plt.plot(eligible_f1s, eligible_f2s, '.', label=f'Execution {curve_number}')
+    pareto_greats = CoordinatesCalculator.get_non_dominated_coordinates(points=all_points)
     plt.plot([p.x for p in pareto_greats], [p.y for p in pareto_greats], 'k^', label=f'Pareto greats')
     plt.plot(curve["f1_values"][:2], curve["f2_values"][:2], 'bs', label=f'Mono optimization')
     plt.plot(non_viable_f1, non_viable_f2, 'rx', label=f'Non viable solutions')

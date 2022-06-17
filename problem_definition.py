@@ -5,7 +5,7 @@ import numpy
 from numpy import random
 
 from graphic_plotter import GraphicPlotter
-from models import AccessPoint, Customer, Coordinate
+from models import AccessPoint, Customer
 from utils import get_arg_min, get_arg_max
 
 
@@ -185,14 +185,3 @@ class ProblemDefinition:
                     point_customers.append(customer.coordinates)
             result.append((point, point_customers))
         return result
-
-
-def get_pareto_great_solutions(values: List[Coordinate]) -> List[Coordinate]:
-    pareto_great_solutions = []
-    values.sort()
-    for index, coordinate in enumerate(values):
-        values_until_index = values[0:index]
-        is_pareto_great = not any([p.y < coordinate.y for p in values_until_index])
-        if is_pareto_great:
-            pareto_great_solutions.append(coordinate)
-    return pareto_great_solutions

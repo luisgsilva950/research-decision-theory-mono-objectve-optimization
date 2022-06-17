@@ -10,9 +10,7 @@ class Coordinate:
         self.y = y
 
     def get_distance(self, point: 'Coordinate'):
-        a = numpy.array((self.x, self.y, 0))
-        b = numpy.array((point.x, point.y, 0))
-        return numpy.linalg.norm(a - b)
+        return CoordinatesCalculator.get_distance(self, point)
 
     def __repr__(self):
         return f'Coordinate(x={self.x}, y={self.y})'
@@ -64,3 +62,22 @@ class Customer:
             distances = [self.coordinates.get_distance(p) for p in points]
         index_min = get_arg_min(distances)
         return points[index_min]
+
+
+class CoordinatesCalculator:
+    @staticmethod
+    def get_non_dominated_coordinates(points: List[Coordinate]) -> List[Coordinate]:
+        pareto_great_solutions = []
+        points.sort()
+        for index, coordinate in enumerate(points):
+            points_until_index = points[0:index]
+            is_dominated = any([p.y < coordinate.y for p in points_until_index])
+            if not is_dominated:
+                pareto_great_solutions.append(coordinate)
+        return pareto_great_solutions
+
+    @staticmethod
+    def get_distance(p: Coordinate, c: Coordinate):
+        a = numpy.array((p.x, p.y, 0))
+        b = numpy.array((c.x, c.y, 0))
+        return numpy.linalg.norm(a - b)
