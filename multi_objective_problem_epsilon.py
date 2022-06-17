@@ -139,7 +139,7 @@ class EpsilonRestrictProblem(ProblemDefinition):
         elif self.k == 5:
             y.shake_k5()
         y.update_active_points()
-        return yS
+        return y
 
     def get_initial_solution(self) -> 'EpsilonRestrictProblem':
         all_points = self.get_points_with_space_100()
