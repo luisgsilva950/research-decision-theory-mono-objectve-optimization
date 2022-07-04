@@ -1,13 +1,21 @@
+import datetime
+import random
+
+import numpy
+
 from models import CoordinatesCalculator, Coordinate
-from utils import load_file
+from multi_objective_problem_epsilon import EpsilonRestrictProblem
+from problem_f1 import ProblemDefinitionF1
+from problem_f2 import ProblemDefinitionF2
+from rvns import Rvns
+from utils import load_file, save_file, get_arg_max
 from matplotlib import pyplot as plt
 
-N_EVALUATIONS = 250
-N_CURVES = 5
-N_WEIGHTS = 30
+N_EVALUATIONS = 300
+N_CURVES = 1
 
 
-def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIGHTS):
+def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES):
     non_viable_f1 = []
     non_viable_f2 = []
     all_points = []
@@ -15,7 +23,7 @@ def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIG
     plt.xlabel("F1")
     plt.ylabel("F2")
     for curve_number in range(N_CURVES):
-        curve = load_file(f"{scope}_results/execution_{curve_number}_{n}_{n_curves}_{n_weights}_{scope}.json")
+        curve = load_file(f"{scope}_results/execution_{curve_number}_{n}_{n_curves}_{scope}.json")
         viable_solution = curve["is_eligible_solution"]
         f1s = curve["f1_values"]
         f2s = curve["f2_values"]
@@ -30,32 +38,33 @@ def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIG
     plt.plot(curve["f1_values"][:2], curve["f2_values"][:2], 'bs', label=f'Mono optimization')
     plt.plot(non_viable_f1, non_viable_f2, 'rx', label=f'Non viable solutions')
     plt.legend()
-    plt.savefig(fname=f'{scope}_results/{scope}_{n}_{n_curves}_{n_weights}_pareto_great.png')
+    plt.savefig(fname=f'{scope}_results/{scope}_{n}_{n_curves}_pareto_great.png')
     plt.close()
 
 
 if __name__ == '__main__':
-    plot_result(scope="pondered_sum")
-    # is_eligible_solution = []
-    # problem_f1 = ProblemDefinitionF1.from_csv()
-    # rvns_f1 = Rvns(problem=problem_f1, max_solutions_evaluations=5 * N_EVALUATIONS, n=1)
-    # rvns_f1.run()
-    # problem_f2 = ProblemDefinitionF2.from_csv()
-    # rvns_f2 = Rvns(problem=problem_f2, max_solutions_evaluations=5 * N_EVALUATIONS, n=1)
-    # rvns_f2.run()
-    # f1_min_solution = rvns_f1.best_solution
-    # f2_min_solution = rvns_f2.best_solution
-    # for iteration in range(N_CURVES):
-    #     is_eligible_solution = [True, True]
-    #     f1_values = [47.0, 100]
-    #     f2_values = [6351.853168212587, 19650.015388388183]
-    #     for _ in range(N_WEIGHTS):
-    #         w1 = numpy.random.uniform(0, 1)
-    #         problem = PonderedSumProblem.from_csv(w1=w1, w2=1 - w1)
-    #         rvns = Rvns(problem=problem, max_solutions_evaluations=N_EVALUATIONS, n=1, kmax=5)
-    #         rvns.run()
-    #         f1_values.append(len(rvns.best_solution.active_points))
-    #         f2_values.append(rvns.best_solution.total_distance)
-    #         is_eligible_solution.append(rvns.best_solution.penal == 0)
-    #     save_file(file_name=f"execution_{iteration}_{N_EVALUATIONS}_{N_CURVES}_{N_WEIGHTS}_pondered_sum.json",
-    #               f1_values=f1_values, f2_values=f2_values, is_eligible_solution=is_eligible_solution)
+    # plot_result(scope="pondered_sum")
+    for iteration in range(N_CURVES):
+        is_eligible_solution = [True, True]
+        f1_values = [47.0, 100]
+        f2_values = [26351.853168212587, 11663.26]
+        consumed_capacity_solution = []
+        max_distance_solution = []
+        solution = []
+        for max_active_points in range(47, 100, 1):
+            problem = EpsilonRestrictProblem.from_csv(max_active_points=max_active_points)
+            rvns = Rvns(problem=problem, max_solutions_evaluations=N_EVALUATIONS, n=1, kmax=5,
+                        n_clusters=max_active_points)
+            rvns.run()
+            f1_values.append(len(rvns.best_solution.active_points))
+            f2_values.append(rvns.best_solution.total_distance)
+            is_eligible_solution.append(rvns.best_solution.penal == 0)
+            # solution_indexes = dict((c_index, get_arg_max(c)) for c_index, c in enumerate(rvns.best_solution.solution))
+            solution.append(rvns.best_solution.solution)
+            max_distance_solution.append(rvns.best_solution.get_max_customer_distance())
+            consumed_capacity_solution.append(rvns.best_solution.get_max_consumed_capacity())
+        save_file(
+            file_name=f"epsilon_restrict_results/execution_{iteration}_{N_EVALUATIONS}_{N_CURVES}_epsilon_restrict_{random.randint(0, 200000)}.json",
+            f1_values=f1_values, f2_values=f2_values, is_eligible_solution=is_eligible_solution,
+            consumed_capacity=consumed_capacity_solution,
+            distance=max_distance_solution, solution=solution)

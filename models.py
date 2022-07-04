@@ -12,6 +12,9 @@ class Coordinate:
     def get_distance(self, point: 'Coordinate'):
         return CoordinatesCalculator.get_distance(self, point)
 
+    def to_dict(self):
+        return dict(x=self.x, y=self.y)
+
     def get_closer_point(self, points: Collection['Coordinate'], distances: List[float] = None) -> 'Coordinate':
         points = list(points)
         if not distances:

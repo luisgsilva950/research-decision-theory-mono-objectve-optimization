@@ -140,28 +140,3 @@ class EpsilonRestrictProblem(ProblemDefinition):
             y.shake_k5()
         y.update_active_points()
         return y
-
-    def get_initial_solution(self) -> 'EpsilonRestrictProblem':
-        all_points = self.get_points_with_space_100()
-        self.active_points = set()
-        self.solution = []
-        for customer in self.customers:
-            customer_bool_solutions = []
-            distances = [self.customer_to_point_distances[customer.index][p.index] for p in all_points]
-            index = get_arg_min(distances)
-            closer_point = all_points[index]
-            if distances[index] > self.max_distance:
-                closer_point = customer.get_closer_point(points=self.points,
-                                                         distances=self.customer_to_point_distances[customer.index])
-            if distances[index] < self.max_distance and len(self.active_points) < self.max_active_points:
-                self.active_points.add(closer_point)
-            for point_index, point in enumerate(self.points):
-                customer_bool_solutions.append(point_index == closer_point.index
-                                               and distances[index] < self.max_distance
-                                               and len(self.active_points) < self.max_active_points)
-            self.solution.append(customer_bool_solutions)
-        self.update_active_points()
-        self.objective_function()
-        print(f"\033[3;92mTotal active points on initial solution: {len(self.active_points)}, "
-              f"initial penal: {self.penal}")
-        return self

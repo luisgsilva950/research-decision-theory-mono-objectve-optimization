@@ -3,9 +3,10 @@ from typing import Set, List, Optional
 
 import numpy
 from numpy import random
+from sklearn.cluster import KMeans
 
 from graphic_plotter import GraphicPlotter
-from models import AccessPoint, Customer
+from models import AccessPoint, Customer, Coordinate
 from utils import get_arg_min, get_arg_max
 
 
@@ -32,9 +33,6 @@ class ProblemDefinition:
         ...
 
     def shake(self) -> 'ProblemDefinition':
-        ...
-
-    def get_initial_solution(self) -> 'ProblemDefinition':
         ...
 
     def update_active_points(self):
@@ -164,6 +162,23 @@ class ProblemDefinition:
                 point = p
         return point
 
+    def get_max_customer_distance(self):
+        max_distance = 0
+        for active_point in self.active_points:
+            for customer in self.customers:
+                point_index = active_point.index
+                customer_index = customer.index
+                active = self.solution[customer.index][active_point.index]
+                if active:
+                    distance = self.customer_to_point_distances[customer_index][point_index]
+                    if distance > max_distance:
+                        max_distance = distance
+        return max_distance
+
+    def get_max_consumed_capacity(self):
+        consumed_capacity_per_point = self.get_consumed_capacity()
+        return max(consumed_capacity_per_point.values())
+
     def get_points_with_space_100(self) -> List[AccessPoint]:
         points = []
         for p in self.points:
@@ -185,3 +200,37 @@ class ProblemDefinition:
                     point_customers.append(customer.coordinates)
             result.append((point, point_customers))
         return result
+
+    def get_initial_solution(self, n_clusters: int = 100) -> 'ProblemDefinition':
+        # all_points = self.get_points_with_space_100()
+        self.active_points = set()
+        self.solution = []
+        kmeans_kwargs = {
+            "init": "random",
+            "n_init": 10,
+            "max_iter": 300,
+            "random_state": 42,
+        }
+        scaled_features = [[c.coordinates.x, c.coordinates.y] for c in self.customers]
+        kmeans = KMeans(n_clusters=n_clusters, **kmeans_kwargs)
+        kmeans.fit(scaled_features)
+        clusters_centers = list([list(c) for c in kmeans.cluster_centers_])
+        clusters_points: List[AccessPoint] = [Coordinate(x=c[0], y=c[1]).get_closer_point(points=self.points) for c in
+                                              clusters_centers]
+        for customer in self.customers:
+            customer_bool_solutions = []
+            distances = [self.customer_to_point_distances[customer.index][p.index] for p in clusters_points]
+            index = get_arg_min(distances)
+            closer_point = clusters_points[index]
+            if distances[index] >= self.max_distance or len(self.active_points) >= self.max_active_points:
+                closer_point = None
+            if closer_point and closer_point.index not in [p.index for p in self.active_points]:
+                self.active_points.add(closer_point)
+            for point_index, point in enumerate(self.points):
+                customer_bool_solutions.append(bool(closer_point and point_index == closer_point.index))
+            self.solution.append(customer_bool_solutions)
+        self.update_active_points()
+        self.objective_function()
+        print(f"\033[3;92mTotal active points on initial solution: {len(self.active_points)}, "
+              f"initial penal: {self.penal}")
+        return self
