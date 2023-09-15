@@ -1,6 +1,7 @@
 from typing import Optional, List, Collection
 
 import numpy
+
 from utils import get_arg_min
 
 
@@ -69,13 +70,22 @@ class Customer:
 
 class CoordinatesCalculator:
     @staticmethod
-    def get_non_dominated_coordinates(points: List[Coordinate]) -> List[Coordinate]:
+    def find_pareto_frontier(points: List[Coordinate]) -> List[Coordinate]:
         pareto_great_solutions = []
         points.sort()
         for index, coordinate in enumerate(points):
-            points_until_index = points[0:index]
-            is_dominated = any([p.y < coordinate.y for p in points_until_index])
-            if not is_dominated:
+            is_dominant = False
+
+            if not pareto_great_solutions:
+                is_dominant = True
+            elif coordinate.x == pareto_great_solutions[-1].x:
+                is_dominant = coordinate.y <= pareto_great_solutions[-1].y
+            elif coordinate.y == pareto_great_solutions[-1].y:
+                is_dominant = coordinate.x <= pareto_great_solutions[-1].x
+            elif coordinate.x > pareto_great_solutions[-1].x:
+                is_dominant = coordinate.y < pareto_great_solutions[-1].y
+
+            if is_dominant:
                 pareto_great_solutions.append(coordinate)
         return pareto_great_solutions
 

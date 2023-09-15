@@ -5,12 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d8e4533-b22a-4722-a377-672b2e41fba6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/rvns.py" beforeDir="false" afterPath="$PROJECT_DIR$/rvns.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_non_dominated_coordinates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -31,12 +42,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-  </component>
-  <component name="RunManager">
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/luisdomingues/Documents/UFMG/lab4/research-decision-theory-optimization"
+  }
+}]]></component>
+  <component name="RunManager" selected="Python tests.Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm">
     <configuration name="problem_f2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="research-decision-theory-optimization" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -58,8 +71,68 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="research-decision-theory-optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="research-decision-theory-optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="research-decision-theory-optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_2&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_3" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="research-decision-theory-optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_3&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm" />
+        <item itemvalue="Python tests.Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions" />
+        <item itemvalue="Python tests.Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_3" />
+        <item itemvalue="Python tests.Python tests for tests.test_non_dominated_coordinates.TestParetoFrontierAlgorithm.test_get_pareto_great_solutions_2" />
         <item itemvalue="Python.problem_f2" />
       </list>
     </recent_temporary>
@@ -87,6 +160,9 @@
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="tests">
+        <watch expression="points" />
+      </configuration>
       <configuration name="PythonConfigurationType">
         <watch expression="None in customer_points" language="Python" />
       </configuration>

@@ -25,7 +25,7 @@ def plot_result(scope: str, n=N_EVALUATIONS, n_curves=N_CURVES, n_weights=N_WEIG
         non_viable_f2.extend([f2 for index, f2 in enumerate(f2s) if not viable_solution[index]])
         all_points.extend([Coordinate(x=x, y=eligible_f2s[index]) for index, x in enumerate(eligible_f1s)])
         plt.plot(eligible_f1s, eligible_f2s, '.', label=f'Execution {curve_number}')
-    pareto_greats = CoordinatesCalculator.get_non_dominated_coordinates(points=all_points)
+    pareto_greats = CoordinatesCalculator.find_pareto_frontier(points=all_points)
     plt.plot([p.x for p in pareto_greats], [p.y for p in pareto_greats], 'k^', label=f'Pareto greats')
     plt.plot(curve["f1_values"][:2], curve["f2_values"][:2], 'bs', label=f'Mono optimization')
     plt.plot(non_viable_f1, non_viable_f2, 'rx', label=f'Non viable solutions')
